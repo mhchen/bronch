@@ -1,5 +1,5 @@
 {
-  "name": "bronch",
+  "name": "@mhchen/bronch",
   "version": "0.0.1",
   "description": "Command line tool for browsing recent git branches and switching to one",
   "main": "main.js",
