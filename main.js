@@ -7,7 +7,7 @@ const inquirer = require('inquirer');
 
 inquirer.registerPrompt(
   'autocomplete',
-  require('inquirer-autocomplete-prompt'),
+  require('inquirer-autocomplete-prompt')
 );
 
 (async () => {
@@ -23,13 +23,18 @@ inquirer.registerPrompt(
       .split('\n')
       .map((line) => line.replace(/^[\* ] /, ''));
   } else {
-    const lines = execFileSync('git', ['reflog', '--grep-reflog=checkout:'], {
+    const output = execFileSync('git', ['reflog', '--grep-reflog=checkout:'], {
       encoding: 'utf-8',
-    })
-      .trim()
-      .split('\n');
+    }).trim();
+    if (!output) {
+      console.log(
+        'No recent branches found. This usually means this is a new repo or you haven’t switched branches yet.'
+      );
+      process.exit();
+    }
+    const lines = output.split('\n');
     recentBranches = lines.map(
-      (line) => line.match(/moving from [^ ]+ to ([^ ]+)$/)[1],
+      (line) => line.match(/moving from [^ ]+ to ([^ ]+)$/)[1]
     );
   }
 
@@ -43,7 +48,7 @@ inquirer.registerPrompt(
     })
       .trim()
       .split('\n')
-      .map((line) => line.replace(/^[\* ] /, '')),
+      .map((line) => line.replace(/^[\* ] /, ''))
   );
 
   const uniqueBranchesSet = new Set(recentBranches);
@@ -64,7 +69,7 @@ inquirer.registerPrompt(
       return Promise.resolve(
         input
           ? fuzzy.filter(input, uniqueBranches).map(({ string }) => string)
-          : uniqueBranches,
+          : uniqueBranches
       );
     },
   });
